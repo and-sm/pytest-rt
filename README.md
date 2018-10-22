@@ -1,5 +1,4 @@
-
-# pytest-rt - Real-time status update plugin via HTTP
+# pytest-rt - pytest data collector for Testgr
 
 Plugin for sending HTTP POST pytest updates to your Testgr service
 

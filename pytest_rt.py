@@ -14,7 +14,6 @@ class Rt(object):
         self.config = config
         self.uuid = str(uuid.uuid4())
         self.endpoint = config.option.url
-        # self.show_errors = show_errors
 
     def post(self, payload):
         headers = {"Content-type": "application/json", "Accept": "text/plain"}
