@@ -3,7 +3,7 @@ import pytest
 import uuid
 import time
 import requests
-from conftest import endpoint, show_errors
+# from conftest import endpoint, show_errors
 from _pytest.runner import runtestprotocol
 
 
@@ -13,18 +13,15 @@ class Rt(object):
 
         self.config = config
         self.uuid = str(uuid.uuid4())
-        self.endpoint = endpoint
-        self.show_errors = show_errors
+        self.endpoint = config.option.url
+        # self.show_errors = show_errors
 
     def post(self, payload):
         headers = {"Content-type": "application/json", "Accept": "text/plain"}
         try:
             requests.post(self.endpoint, data=json.dumps(payload), headers=headers)
         except requests.exceptions.ConnectionError as error:
-            if self.show_errors:
                 print(error)
-            else:
-                pass
 
     def pytest_collection_modifyitems(self, session):
         tests = []
@@ -41,7 +38,7 @@ class Rt(object):
                    "job_id": self.uuid})
 
     def pytest_runtest_logstart(self, nodeid, location):
-        print("pytest_runtest_logstart")
+        # print("pytest_runtest_logstart")
         self.post({
             "fw": "2",
             "type": "startTestItem",
@@ -99,11 +96,13 @@ def pytest_addoption(parser):
     group = parser.getgroup("pytest-rt")
     group.addoption("--rt", default=False, dest="rt", action="store_true", help="Enable realtime status send")
     group.addoption("--rte", default=None, dest="env", action="store", help="Environment")
+    group.addoption("--rtu", default=None, dest="url", action="store", help="Testgr URL")
 
 
 def pytest_configure(config):
     rt = config.getoption("rt")
     env = config.getoption("env")
+    url = config.getoption("url")
     if rt:
         plugin = Rt(config)
         config._rt = plugin

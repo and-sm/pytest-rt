@@ -1,23 +1,16 @@
 
 # pytest-rt - Real-time status update plugin via HTTP
 
-Using following plugin you can send HTTP POST requests with test status updates to your API endpoint.
+Plugin for sending HTTP POST pytest updates to your Testgr service
 
 ### Installing
 
-Put pytest-rt near your conftest.py file.
-
-In conftest.py enable following settings:
-```
-pytest_plugins = "pytest_rt"  
-endpoint = "http://127.0.0.1/loader"  # Your API endpoint
-show_errors = True  # show POST errors
-```
+```pip install pytest-rt```
 
 ### Launch
 ```
-pytest --rt -> will launch pytest with pytest-rt plugin.
-pytest --rt --rte=DEV -> will launch pytest with pytest-rt and send your environment name as additional info to the API server. 
+pytest --rt --rtu="http://127.0.0.1/loader" -> will launch pytest with pytest-rt plugin.
+pytest --rt --rte=DEV --rtu="http://127.0.0.1/loader" -> will launch pytest with pytest-rt and send your environment name as additional info to the Tesgr server. 
 ```
 
 ### POST requests examples produced by pytest-rt
@@ -90,6 +83,6 @@ pytest --rt --rte=DEV -> will launch pytest with pytest-rt and send your environ
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 
