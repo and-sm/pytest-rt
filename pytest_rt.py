@@ -3,7 +3,6 @@ import pytest
 import uuid
 import time
 import requests
-# from conftest import endpoint, show_errors
 from _pytest.runner import runtestprotocol
 
 
@@ -83,12 +82,18 @@ class Rt(object):
                 "stopTime": str(time.time())
             })
 
+    def send_report(self, session):
+        if session.config.option.rt_job_report is True:
+            return "1"
+        return "0"
+
     def pytest_sessionfinish(self, session):
         self.post({
             "fw": "2",
             "type": "stopTestRun",
             "job_id": self.uuid,
-            "stopTime": str(time.time())})
+            "stopTime": str(time.time()),
+            "send_report": self.send_report(session)})
 
 
 def pytest_addoption(parser):
@@ -96,12 +101,15 @@ def pytest_addoption(parser):
     group.addoption("--rt", default=False, dest="rt", action="store_true", help="Enable realtime status send")
     group.addoption("--rte", default=None, dest="env", action="store", help="Environment")
     group.addoption("--rtu", default=None, dest="url", action="store", help="Testgr URL")
+    group.addoption("--rt-job-report", default=None, dest="rt_job_report", action="store_true",
+                    help="Send Testgr job result via email")
 
 
 def pytest_configure(config):
     rt = config.getoption("rt")
     env = config.getoption("env")
     url = config.getoption("url")
+    send_email = config.getoption("rt_job_report")
     if rt:
         plugin = Rt(config)
         config._rt = plugin
