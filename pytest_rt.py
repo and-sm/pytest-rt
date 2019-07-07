@@ -13,6 +13,8 @@ class Rt(object):
         self.config = config
         self.uuid = str(uuid.uuid4())
         self.endpoint = config.option.url
+        self.tests = list()
+        self.test_uuids = None
 
     def post(self, payload):
         headers = {"Content-type": "application/json", "Accept": "text/plain"}
@@ -22,26 +24,30 @@ class Rt(object):
                 print(error)
 
     def pytest_collection_modifyitems(self, session):
-        tests = []
         for item in session.items:
             node = dict()
             node["location"] = item.location[2]
             node["nodeid"] = item.nodeid
-            tests.append(node)
+            node["uuid"] = str(uuid.uuid4())
+            self.tests.append(node)
         self.post({"fw": "2",
                    "type": "startTestRun",
-                   "tests": tests,
+                   "tests": self.tests,
                    "env": session.config.option.env,
                    "startTime": time.time(),
                    "job_id": self.uuid})
 
     def pytest_runtest_logstart(self, nodeid, location):
         # print("pytest_runtest_logstart")
+        for item in self.tests:
+            if item["nodeid"] == nodeid:
+                test_uuid = item["uuid"]
         self.post({
             "fw": "2",
             "type": "startTestItem",
             "job_id": self.uuid,
             "test": nodeid,
+            "uuid": test_uuid,
             "startTime": str(time.time())})
 
     def pytest_runtest_logreport(self, report):
