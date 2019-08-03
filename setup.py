@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
 	name="pytest-rt",
-	version="0.4.0",
+	version="0.5.0",
 	author="Andrey Smirnov",
 	author_email="and.inbx@gmail.com",
 	description="pytest data collector plugin for Testgr",

@@ -29,6 +29,7 @@ class Rt(object):
             node["location"] = item.location[2]
             node["nodeid"] = item.nodeid
             node["uuid"] = str(uuid.uuid4())
+            node["description"] = item._obj.__doc__
             self.tests.append(node)
         self.post({"fw": "2",
                    "type": "startTestRun",
