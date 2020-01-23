@@ -1,8 +1,8 @@
 # pytest-rt - pytest data collector for Testgr
 
-Plugin for sending HTTP POST pytest updates to your Testgr service
+Plugin sends pytest data to Testgr server.
 
-### Installing
+### Setup
 
 ```pip install pytest-rt```
 
@@ -11,7 +11,7 @@ Plugin for sending HTTP POST pytest updates to your Testgr service
 pytest --rt --rtu="http://127.0.0.1/loader" -> will launch pytest with pytest-rt plugin.
 ```
 Additional arguments:
-\-\-rte="your_environment" -> will launch pytest and send your environment name as additional info to the Tesgr server. 
+\-\-rte="your_environment_or_version_etc" -> will send your environment name to the Testgr server. 
 
 ## Authors
 [**Andrey Smirnov**](https://github.com/and-sm)
