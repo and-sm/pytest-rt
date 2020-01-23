@@ -15,6 +15,7 @@ class Rt(object):
         self.endpoint = config.option.url
         self.tests = list()
         self.test_uuids = None
+        self.test_uuid = None
 
     def post(self, payload):
         headers = {"Content-type": "application/json", "Accept": "text/plain"}
@@ -39,16 +40,14 @@ class Rt(object):
                    "job_id": self.uuid})
 
     def pytest_runtest_logstart(self, nodeid, location):
-        # print("pytest_runtest_logstart")
         for item in self.tests:
             if item["nodeid"] == nodeid:
-                test_uuid = item["uuid"]
+                self.test_uuid = item["uuid"]
         self.post({
             "fw": "2",
             "type": "startTestItem",
             "job_id": self.uuid,
-            "test": nodeid,
-            "uuid": test_uuid,
+            "uuid": self.test_uuid,
             "startTime": str(time.time())})
 
     def pytest_runtest_logreport(self, report):
@@ -62,7 +61,7 @@ class Rt(object):
                     "fw": "2",
                     "type": "stopTestItem",
                     "job_id": self.uuid,
-                    "test": report.nodeid,
+                    "uuid": self.test_uuid,
                     "status": "failed",
                     "msg": str(report.longreprtext),
                     "stopTime": str(time.time())
@@ -72,7 +71,7 @@ class Rt(object):
                 "fw": "2",
                 "type": "stopTestItem",
                 "job_id": self.uuid,
-                "test": report.nodeid,
+                "uuid": self.test_uuid,
                 "status": "passed",
                 "msg": str(report.longreprtext),
                 "stopTime": str(time.time())
@@ -83,7 +82,7 @@ class Rt(object):
                 "fw": "2",
                 "type": "stopTestItem",
                 "job_id": self.uuid,
-                "test": report.nodeid,
+                "uuid": self.test_uuid,
                 "status": "skipped",
                 "msg": str(report.longreprtext),
                 "stopTime": str(time.time())
