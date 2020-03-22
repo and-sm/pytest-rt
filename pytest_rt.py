@@ -36,6 +36,7 @@ class Rt(object):
                    "type": "startTestRun",
                    "tests": self.tests,
                    "env": session.config.option.env,
+                   "custom_data": session.config.option.rt_custom_data,
                    "startTime": time.time(),
                    "job_id": self.uuid})
 
@@ -109,6 +110,7 @@ def pytest_addoption(parser):
     group.addoption("--rtu", default=None, dest="url", action="store", help="Testgr URL")
     group.addoption("--rt-job-report", default=None, dest="rt_job_report", action="store_true",
                     help="Send Testgr job result via email")
+    group.addoption('--rt-custom-data', dest='rt_custom_data', help='With --rt-custom-data {\"key\": \"value\"} option you can send additional data to Testgr server')
 
 
 def pytest_configure(config):
@@ -116,6 +118,7 @@ def pytest_configure(config):
     env = config.getoption("env")
     url = config.getoption("url")
     send_email = config.getoption("rt_job_report")
+    custom_data = config.getoption("rt_custom_data")
     if rt:
         plugin = Rt(config)
         config._rt = plugin
