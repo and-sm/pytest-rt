@@ -8,7 +8,7 @@ Plugin sends pytest data to Testgr server.
 
 ### Launch
 ```
-pytest --rt --rtu="http://127.0.0.1/loader" -> will launch pytest with pytest-rt plugin.
+pytest --rt --rtu="http://your_testgr_url/loader" -> will launch pytest with pytest-rt plugin.
 ```
 Additional arguments:
 \-\-rte="your_environment_or_version_etc" -> will send your environment name to the Testgr server. 
