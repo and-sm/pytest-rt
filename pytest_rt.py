@@ -58,6 +58,9 @@ class Rt(object):
                 # "suite": str(item.parent),
                 # "desc": item.name,
                 # "reason": report
+                screens_for_upload = ""
+                if pytest.t_screen and len(pytest.t_screen):
+                    screens_for_upload = pytest.t_screen
                 self.post({
                     "fw": "2",
                     "type": "stopTestItem",
@@ -65,9 +68,13 @@ class Rt(object):
                     "uuid": self.test_uuid,
                     "status": "failed",
                     "msg": str(report.longreprtext),
-                    "stopTime": str(time.time())
+                    "stopTime": str(time.time()),
+                    "screens": screens_for_upload
                 })
         elif report.when == "call" and report.outcome == "passed":
+            screens_for_upload = ""
+            if pytest.t_screen and len(pytest.t_screen):
+                screens_for_upload = pytest.t_screen
             self.post({
                 "fw": "2",
                 "type": "stopTestItem",
@@ -75,7 +82,8 @@ class Rt(object):
                 "uuid": self.test_uuid,
                 "status": "passed",
                 "msg": str(report.longreprtext),
-                "stopTime": str(time.time())
+                "stopTime": str(time.time()),
+                "screens": screens_for_upload
             })
         elif (report.when == "call" and report.outcome == "skipped") or (report.when == "setup" and
                                                                          report.outcome == "skipped"):
