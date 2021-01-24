@@ -59,7 +59,7 @@ class Rt(object):
                 # "desc": item.name,
                 # "reason": report
                 screens_for_upload = ""
-                if pytest.t_screen and len(pytest.t_screen):
+                if hasattr(pytest, 't_screen'):
                     screens_for_upload = pytest.t_screen
                 self.post({
                     "fw": "2",
@@ -73,7 +73,7 @@ class Rt(object):
                 })
         elif report.when == "call" and report.outcome == "passed":
             screens_for_upload = ""
-            if pytest.t_screen and len(pytest.t_screen):
+            if hasattr(pytest, 't_screen'):
                 screens_for_upload = pytest.t_screen
             self.post({
                 "fw": "2",
