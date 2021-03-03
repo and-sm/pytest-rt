@@ -10,8 +10,18 @@ Plugin sends pytest data to Testgr server.
 ```
 pytest --rt --rtu="http://your_testgr_url/loader" -> will launch pytest with pytest-rt plugin.
 ```
-Additional arguments:
-\-\-rte="your_environment_or_version_etc" -> will send your environment name to the Testgr server. 
+Additional parameters: 
+
+* --rte "your_environment" -> Send your environment name as additional data to the Testgr server. 
+* --rt-job-report - Enable email sending after job finish.
+* --rt-custom-data - Send any custom data to the Testgr in dict format. Example:
+```
+--rt-custom data='{"Git":"dev-branch"}'
+```
+* --rt-custom-id - requirement for pytest-xdist plugin. Use with random ID. 
+```
+--rt-custom-id="unique_id"
+```
 
 ## Authors
 [**Andrey Smirnov**](https://github.com/and-sm)
