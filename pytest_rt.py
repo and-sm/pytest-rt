@@ -140,7 +140,8 @@ class Rt:
             "stopTime": str(time.time()),
             "send_report": self.send_report(session)})
         if self.rt_return_job:
-            print(self.uuid)
+            with open("testgr_last_job.txt", "w") as file:
+                file.write(self.uuid)
 
 
 def pytest_addoption(parser):
