@@ -14,7 +14,7 @@ Additional parameters:
 
 * --rte "your_environment" -> Send your environment name as additional data to the Testgr server. 
 * --rt-job-report - Enable email sending after job finish.
-* --rt-return-job - write last finished job UUID in testgr_last_job.txt file.
+* --rt-return-job - Write last finished job UUID in testgr_last_job.txt file.
 * --rt-custom-data - Send any custom data to the Testgr in dict format. Example:
 ```
 --rt-custom data='{"Git":"dev-branch"}'
