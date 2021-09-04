@@ -17,5 +17,5 @@ setuptools.setup(
 	entry_points={"pytest11": ["pytest_rt = pytest_rt"]},
 	classifiers=[
 		"Framework :: Pytest",
-		"Programming Language :: Python :: 3.6"],
+		"Programming Language :: Python :: 3.8"],
 )
