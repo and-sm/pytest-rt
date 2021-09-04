@@ -92,7 +92,7 @@ class Rt:
                     "uuid": self.test_uuid,
                     "custom_id": self.rt_custom_id,
                     "status": "failed",
-                    "msg": str(report.longreprtext),
+                    "msg": str(report.longreprtext) + "\n\nCaptured stdout call:\n" + str(report.capstdout),
                     "stopTime": str(time.time()),
                     "screens": screens_for_upload
                 })
