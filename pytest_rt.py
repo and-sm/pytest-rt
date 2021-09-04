@@ -157,7 +157,7 @@ def pytest_addoption(parser):
                     help='With --rt-custom-data {\"key\": \"value\"} option you can send additional data to '
                          'Testgr server')
     group.addoption('--rt-return-job', dest='rt_return_job', action="store_true",
-                    help='With --rt-return_job option you can return job UUID')
+                    help='With --rt-return-job option you can return job UUID')
 
 
 def pytest_configure(config):
