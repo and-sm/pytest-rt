@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
 	name="pytest-rt",
-	version="1.2.0",
+	version="1.3.0",
 	author="Andrey Smirnov",
 	author_email="and.inbx@gmail.com",
 	description="pytest data collector plugin for Testgr",
@@ -17,5 +17,5 @@ setuptools.setup(
 	entry_points={"pytest11": ["pytest_rt = pytest_rt"]},
 	classifiers=[
 		"Framework :: Pytest",
-		"Programming Language :: Python :: 3.6"],
+		"Programming Language :: Python :: 3.8"],
 )

@@ -15,6 +15,7 @@ class Rt:
         self.uuid = str(uuid.uuid4())
         self.endpoint = config.option.url
         self.rt_custom_id = config.option.rt_custom_id
+        self.rt_return_job = config.option.rt_return_job
         self.tests = list()
         self.test_uuids = None
         self.test_uuid = None
@@ -91,7 +92,7 @@ class Rt:
                     "uuid": self.test_uuid,
                     "custom_id": self.rt_custom_id,
                     "status": "failed",
-                    "msg": str(report.longreprtext),
+                    "msg": str(report.longreprtext) + "\n\nCaptured stdout call:\n" + str(report.capstdout),
                     "stopTime": str(time.time()),
                     "screens": screens_for_upload
                 })
@@ -138,6 +139,9 @@ class Rt:
             "custom_id": self.rt_custom_id,
             "stopTime": str(time.time()),
             "send_report": self.send_report(session)})
+        if self.rt_return_job:
+            with open("testgr_last_job.txt", "w") as file:
+                file.write(self.uuid)
 
 
 def pytest_addoption(parser):
@@ -152,6 +156,8 @@ def pytest_addoption(parser):
     group.addoption('--rt-custom-data', dest='rt_custom_data',
                     help='With --rt-custom-data {\"key\": \"value\"} option you can send additional data to '
                          'Testgr server')
+    group.addoption('--rt-return-job', dest='rt_return_job', action="store_true",
+                    help='With --rt-return-job option you can return job UUID')
 
 
 def pytest_configure(config):
