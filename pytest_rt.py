@@ -96,6 +96,22 @@ class Rt:
                     "stopTime": str(time.time()),
                     "screens": screens_for_upload
                 })
+        elif report.when == "setup" and report.outcome == "failed":
+            if report.failed and not hasattr(report, "wasxfail"):
+                screens_for_upload = ""
+                if hasattr(pytest, 't_screen'):
+                    screens_for_upload = pytest.t_screen
+                self.post({
+                    "fw": "2",
+                    "type": "stopTestItem",
+                    "job_id": self.uuid,
+                    "uuid": self.test_uuid,
+                    "custom_id": self.rt_custom_id,
+                    "status": "failed",
+                    "msg": str(report.longreprtext) + "\n\nCaptured stdout call:\n" + str(report.capstdout),
+                    "stopTime": str(time.time()),
+                    "screens": screens_for_upload
+                })
         elif report.when == "call" and report.outcome == "passed":
             screens_for_upload = ""
             if hasattr(pytest, 't_screen'):
