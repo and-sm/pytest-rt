@@ -17,7 +17,6 @@ class Rt:
         self.rt_custom_id = config.option.rt_custom_id
         self.rt_return_job = config.option.rt_return_job
         self.tests = list()
-        self.test_uuids = None
         self.test_uuid = None
 
     def post(self, payload):
@@ -70,18 +69,51 @@ class Rt:
             if item["nodeid"] == nodeid:
                 self.test_uuid = item["uuid"]
 
-        self.post({
-            "fw": "2",
-            "type": "startTestItem",
-            "job_id": self.uuid,
-            "uuid": self.test_uuid,
-            "custom_id": self.rt_custom_id,
-            "startTime": str(time.time())})
+        if self.test_uuid is not None:
+            self.post({
+                "fw": "2",
+                "type": "startTestItem",
+                "job_id": self.uuid,
+                "uuid": self.test_uuid,
+                "custom_id": self.rt_custom_id,
+                "startTime": str(time.time())})
 
     def pytest_runtest_logreport(self, report):
 
-        if report.when == "call" and report.outcome == "failed":
-            if report.failed and not hasattr(report, "wasxfail"):
+        if self.test_uuid is not None:
+            if report.when == "call" and report.outcome == "failed":
+                if report.failed and not hasattr(report, "wasxfail"):
+                    screens_for_upload = ""
+                    if hasattr(pytest, 't_screen'):
+                        screens_for_upload = pytest.t_screen
+                    self.post({
+                        "fw": "2",
+                        "type": "stopTestItem",
+                        "job_id": self.uuid,
+                        "uuid": self.test_uuid,
+                        "custom_id": self.rt_custom_id,
+                        "status": "failed",
+                        "msg": str(report.longreprtext) + "\n\nCaptured stdout call:\n" + str(report.capstdout),
+                        "stopTime": str(time.time()),
+                        "screens": screens_for_upload
+                    })
+            elif report.when == "setup" and report.outcome == "failed":
+                if report.failed and not hasattr(report, "wasxfail"):
+                    screens_for_upload = ""
+                    if hasattr(pytest, 't_screen'):
+                        screens_for_upload = pytest.t_screen
+                    self.post({
+                        "fw": "2",
+                        "type": "stopTestItem",
+                        "job_id": self.uuid,
+                        "uuid": self.test_uuid,
+                        "custom_id": self.rt_custom_id,
+                        "status": "failed",
+                        "msg": str(report.longreprtext) + "\n\nCaptured stdout call:\n" + str(report.capstdout),
+                        "stopTime": str(time.time()),
+                        "screens": screens_for_upload
+                    })
+            elif report.when == "call" and report.outcome == "passed":
                 screens_for_upload = ""
                 if hasattr(pytest, 't_screen'):
                     screens_for_upload = pytest.t_screen
@@ -91,54 +123,23 @@ class Rt:
                     "job_id": self.uuid,
                     "uuid": self.test_uuid,
                     "custom_id": self.rt_custom_id,
-                    "status": "failed",
-                    "msg": str(report.longreprtext) + "\n\nCaptured stdout call:\n" + str(report.capstdout),
+                    "status": "passed",
+                    "msg": str(report.longreprtext),
                     "stopTime": str(time.time()),
                     "screens": screens_for_upload
                 })
-        elif report.when == "setup" and report.outcome == "failed":
-            if report.failed and not hasattr(report, "wasxfail"):
-                screens_for_upload = ""
-                if hasattr(pytest, 't_screen'):
-                    screens_for_upload = pytest.t_screen
+            elif (report.when == "call" and report.outcome == "skipped") or (report.when == "setup" and
+                                                                             report.outcome == "skipped"):
                 self.post({
                     "fw": "2",
                     "type": "stopTestItem",
                     "job_id": self.uuid,
                     "uuid": self.test_uuid,
                     "custom_id": self.rt_custom_id,
-                    "status": "failed",
-                    "msg": str(report.longreprtext) + "\n\nCaptured stdout call:\n" + str(report.capstdout),
-                    "stopTime": str(time.time()),
-                    "screens": screens_for_upload
+                    "status": "skipped",
+                    "msg": str(report.longreprtext),
+                    "stopTime": str(time.time())
                 })
-        elif report.when == "call" and report.outcome == "passed":
-            screens_for_upload = ""
-            if hasattr(pytest, 't_screen'):
-                screens_for_upload = pytest.t_screen
-            self.post({
-                "fw": "2",
-                "type": "stopTestItem",
-                "job_id": self.uuid,
-                "uuid": self.test_uuid,
-                "custom_id": self.rt_custom_id,
-                "status": "passed",
-                "msg": str(report.longreprtext),
-                "stopTime": str(time.time()),
-                "screens": screens_for_upload
-            })
-        elif (report.when == "call" and report.outcome == "skipped") or (report.when == "setup" and
-                                                                         report.outcome == "skipped"):
-            self.post({
-                "fw": "2",
-                "type": "stopTestItem",
-                "job_id": self.uuid,
-                "uuid": self.test_uuid,
-                "custom_id": self.rt_custom_id,
-                "status": "skipped",
-                "msg": str(report.longreprtext),
-                "stopTime": str(time.time())
-            })
 
     def send_report(self, session):
 
@@ -189,3 +190,5 @@ def pytest_unconfigure(config):
     if plugin is not None:
         del config._rt
         config.pluginmanager.unregister(plugin)
+
+
