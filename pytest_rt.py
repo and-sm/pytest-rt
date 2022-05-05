@@ -191,3 +191,4 @@ def pytest_unconfigure(config):
         del config._rt
         config.pluginmanager.unregister(plugin)
 
+
